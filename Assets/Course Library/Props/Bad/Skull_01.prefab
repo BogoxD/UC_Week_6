@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -8298654655966028430}
   m_Layer: 6
   m_Name: Skull_01
-  m_TagString: Untagged
+  m_TagString: DamageItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

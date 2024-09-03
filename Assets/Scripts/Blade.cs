@@ -25,6 +25,10 @@ public class Blade : MonoBehaviour
         else if (slicing)
             ContinueSlicing();
     }
+    private void OnEnable()
+    {
+        StopSlicing();
+    }
     private void OnDisable()
     {
         StopSlicing();
@@ -42,7 +46,8 @@ public class Blade : MonoBehaviour
     private void StopSlicing()
     {
         slicing = false;
-        bladeCollider.enabled = false;
+        if (bladeCollider)
+            bladeCollider.enabled = false;
     }
     private void ContinueSlicing()
     {

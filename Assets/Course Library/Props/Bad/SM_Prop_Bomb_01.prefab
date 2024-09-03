@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8586643178934208223}
   m_Layer: 6
   m_Name: SM_Prop_Bomb_01
-  m_TagString: Untagged
+  m_TagString: DamageItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
