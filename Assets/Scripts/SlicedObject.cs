@@ -23,6 +23,11 @@ public class SlicedObject : MonoBehaviour
         {
             Debug.Log("Slice");
             Slice(other.GetComponent<Blade>().Direction);
+
+            if(gameObject.CompareTag("DamageItem"))
+            {
+                GameManager.instance.DecreaseHealth();
+            }
         }
     }
 }

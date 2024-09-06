@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [Header("Level")]
     [SerializeField] public int maxToSpawnObjects = 10;
 
@@ -13,50 +18,82 @@ public class GameManager : MonoBehaviour
     [SerializeField] [Range(0, 10)] public float maxTorqueYSpeed = 5f;
     [SerializeField] [Range(0, 10)] public float maxTorqueXSpeed = 5f;
 
-    private float currentForceSpeed;
-    private float currentTorqueYspeed;
-    private float currentTorqueXspeed;
-
     [Header("Spawning")]
     [SerializeField] public float spawnXRange = 10f;
     [SerializeField] public int spawnSpeed = 2;
+    [SerializeField] public int minObjectsPerSpawn = 1;
+    [SerializeField] public int maxObjectsPerSpawn = 3;
+
+    [Header("Health")]
+    [SerializeField] public int maxHealth = 3;
+    [SerializeField] public List<GameObject> heartsUI;
 
     [Header("References")]
     [SerializeField] public GameObject[] prefabs;
 
+    private float currentForceSpeed;
+    private float currentTorqueYspeed;
+    private float currentTorqueXspeed;
+
+    private int currentHealth;
+    private int currentObjectPerSpawn;
+
+    private void Awake()
+    {
+        heartsUI = GameObject.FindGameObjectsWithTag("HeartUI").ToList();
+    }
     void Start()
     {
-        StartCoroutine(LaunchObject());
-    }
+        if (!instance)
+            instance = this;
+        else
+            Destroy(gameObject);
 
+        DontDestroyOnLoad(gameObject);
+
+        //set currentHealth
+        currentHealth = maxHealth;
+
+        //start launching objects
+        StartCoroutine(LaunchObject());
+
+    }
     IEnumerator LaunchObject()
     {
         for (int i = 0; i < maxToSpawnObjects; i++)
         {
-            //spawn random object from prefabs
-            int randomPrefabIndex = Random.Range(0, prefabs.Length);
+            RandomObjectsPerSpawn(minObjectsPerSpawn, maxObjectsPerSpawn);
 
-            //get random X pos based on transform
-            float randomXpos = Random.Range(-spawnXRange, spawnXRange);
-
-            GameObject spawnedObject = Instantiate(prefabs[randomPrefabIndex], transform.position + Vector3.right * randomXpos, Quaternion.identity, transform);
-
-            //add random torque speed
-            RandomTorqueSpeed();
-            //add random force
-            RandomForce();
-
-            if (spawnedObject.TryGetComponent(out Rigidbody rb))
+            for (int j = 0; j < currentObjectPerSpawn; j++)
             {
-                rb.AddTorque(Vector3.right * currentTorqueXspeed + Vector3.up * currentTorqueYspeed, ForceMode.Impulse);
-                rb.AddForce(Vector3.up * currentForceSpeed, ForceMode.Impulse);
+                //spawn random object from prefabs
+                int randomPrefabIndex = Random.Range(0, prefabs.Length);
 
-                yield return new WaitForSeconds(spawnSpeed);
+                //get random X pos based on transform
+                float randomXpos = Random.Range(-spawnXRange, spawnXRange);
+
+                GameObject spawnedObject = Instantiate(prefabs[randomPrefabIndex], transform.position + Vector3.right * randomXpos, Quaternion.identity, transform);
+
+                //add random torque speed
+                RandomTorqueSpeed();
+                //add random force
+                RandomForce();
+
+                if (spawnedObject.TryGetComponent(out Rigidbody rb))
+                {
+                    rb.AddTorque(Vector3.right * currentTorqueXspeed + Vector3.up * currentTorqueYspeed, ForceMode.Impulse);
+                    rb.AddForce(Vector3.up * currentForceSpeed, ForceMode.Impulse);
+                }
             }
+
+            yield return new WaitForSeconds(spawnSpeed);
         }
 
     }
-
+    private void RandomObjectsPerSpawn(int min, int max)
+    {
+        currentObjectPerSpawn = Random.Range(min, max);
+    }
     private void RandomForce()
     {
         currentForceSpeed = Random.Range(minForceSpeed, maxForceSpeed);
@@ -65,5 +102,22 @@ public class GameManager : MonoBehaviour
     {
         currentTorqueXspeed = Random.Range(-maxTorqueXSpeed, maxTorqueXSpeed);
         currentTorqueYspeed = Random.Range(-maxTorqueYSpeed, maxTorqueYSpeed);
+    }
+    public void DecreaseHealth()
+    {
+        currentHealth--;
+
+        //Update UI
+        if (heartsUI.Count >= 0)
+        {
+            //deactivate object and remove from list
+            heartsUI[heartsUI.Count - 1].SetActive(false);
+            heartsUI.RemoveAt(heartsUI.Count - 1);
+        }
+
+        if (currentHealth <= 0)
+        {
+            //GAME OVER DAMNIT
+        }
     }
 }
