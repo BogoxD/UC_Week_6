@@ -18,4 +18,10 @@ public class MenuManager : MonoBehaviour
     {
         Application.Quit();
     }
+    public void OnRestart()
+    {
+        SceneManager.LoadScene(0);
+        GameManager.instance.RestartSpawning();
+        Time.timeScale = 1f;
+    }
 }

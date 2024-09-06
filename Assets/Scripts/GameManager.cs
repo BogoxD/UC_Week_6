@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] public GameObject[] prefabs;
 
+    [Header("Buttons")]
+    [SerializeField] public GameObject restartButton;
+
     private float currentForceSpeed;
     private float currentTorqueYspeed;
     private float currentTorqueXspeed;
@@ -38,9 +41,17 @@ public class GameManager : MonoBehaviour
     private int currentHealth;
     private int currentObjectPerSpawn;
 
+    private Scene scene;
+    private GameObject playerBlade;
+
     private void Awake()
     {
-        heartsUI = GameObject.FindGameObjectsWithTag("HeartUI").ToList();
+        //clean up
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        scene = SceneManager.GetActiveScene();
     }
     void Start()
     {
@@ -118,6 +129,35 @@ public class GameManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             //GAME OVER DAMNIT
+            restartButton.SetActive(true);
+            playerBlade.SetActive(false);
+            Time.timeScale = 0;
         }
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //do stuff when scene is loaded
+        GameObject[] tempHeartsUI = GameObject.FindGameObjectsWithTag("HeartUI");
+
+        //assign hearts ui
+        for (int i = 0; i < tempHeartsUI.Length; i++)
+            heartsUI.Add(tempHeartsUI[i]);
+
+        //assign restart button
+        restartButton = GameObject.Find("Restart_Button");
+        if (restartButton) restartButton.SetActive(false);
+
+        //assign player blade
+        playerBlade = GameObject.FindGameObjectWithTag("Blade");
+
+    }
+    public void RestartSpawning()
+    {
+        foreach (Transform child in gameObject.transform)
+            Destroy(child.gameObject);
+
+        maxToSpawnObjects = 999;
+
+        Time.timeScale = 1f;
     }
 }

@@ -12,6 +12,10 @@ public class SlicedObject : MonoBehaviour
     private Collider objectCollider;
 
     private bool sliced = false;
+    private void Start()
+    {
+        Destroy(gameObject, 5f);
+    }
     private void Slice(Vector3 direciton)
     {
         particles.Play();
