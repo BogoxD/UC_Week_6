@@ -8,6 +8,8 @@ TagManager:
   - DamageItem
   - ScoreItem
   - HeartUI
+  - ScoreUI
+  - TopScoreUI
   layers:
   - Default
   - TransparentFX

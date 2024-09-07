@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using System.Linq;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,7 +30,9 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] public GameObject[] prefabs;
 
-    [Header("Buttons")]
+    [Header("UI")]
+    [SerializeField] public TextMeshProUGUI scoreText;
+    [SerializeField] public TextMeshProUGUI topScoreText;
     [SerializeField] public GameObject restartButton;
 
     private float currentForceSpeed;
@@ -41,8 +42,10 @@ public class GameManager : MonoBehaviour
     private int currentHealth;
     private int currentObjectPerSpawn;
 
-    private Scene scene;
+    private Scene currentScene;
     private GameObject playerBlade;
+
+    private int currentScore;
 
     private void Awake()
     {
@@ -50,8 +53,6 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-
-        scene = SceneManager.GetActiveScene();
     }
     void Start()
     {
@@ -130,12 +131,26 @@ public class GameManager : MonoBehaviour
         {
             //GAME OVER DAMNIT
             restartButton.SetActive(true);
+            topScoreText.gameObject.SetActive(true);
             playerBlade.SetActive(false);
             Time.timeScale = 0;
+
+            if (PlayerPrefs.GetInt("TopScore") < currentScore)
+                PlayerPrefs.SetInt("TopScore", currentScore);
+            else if (PlayerPrefs.GetInt("TopScore") == 0)
+                PlayerPrefs.SetInt("TopScore", currentScore);
+
+            topScoreText.text = $"Top Score: {PlayerPrefs.GetInt("TopScore")}";
+
+            currentScore = 0;
         }
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //set currentScene
+        currentScene = SceneManager.GetActiveScene();
+
+        if (currentScene.name == "Main_Menu") return;
         //do stuff when scene is loaded
         GameObject[] tempHeartsUI = GameObject.FindGameObjectsWithTag("HeartUI");
 
@@ -150,6 +165,16 @@ public class GameManager : MonoBehaviour
         //assign player blade
         playerBlade = GameObject.FindGameObjectWithTag("Blade");
 
+        //assign score text
+        if (GameObject.FindGameObjectWithTag("ScoreUI").TryGetComponent(out TextMeshProUGUI scoreTextTMPro))
+            scoreText = scoreTextTMPro;
+
+        //assign top score text
+        if (GameObject.FindGameObjectWithTag("TopScoreUI").TryGetComponent(out TextMeshProUGUI topScoreTextTMPro))
+        {
+            topScoreText = topScoreTextTMPro;
+            topScoreText.gameObject.SetActive(false);
+        }
     }
     public void RestartSpawning()
     {
@@ -158,6 +183,21 @@ public class GameManager : MonoBehaviour
 
         maxToSpawnObjects = 999;
 
+        currentHealth = maxHealth;
+
         Time.timeScale = 1f;
+
+    }
+    public void UpdateScore(int itemScore)
+    {
+        if (scoreText)
+        {
+            currentScore += itemScore;
+            scoreText.text = $"Score: {currentScore}";
+        }
+    }
+    public void MultiplyScore(float itemScore, float multiplier)
+    {
+        currentScore += (int)(itemScore * multiplier);
     }
 }

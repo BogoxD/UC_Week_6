@@ -7,11 +7,12 @@ public class SlicedObject : MonoBehaviour
     public GameObject wholeObject;
     public GameObject slicedObject;
     public ParticleSystem particles;
+    public int itemScore;
 
     private Rigidbody objectRb;
     private Collider objectCollider;
 
-    private bool sliced = false;
+    public bool sliced = false;
     private void Start()
     {
         Destroy(gameObject, 5f);
@@ -23,15 +24,16 @@ public class SlicedObject : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Blade") && !sliced)
+        if (other.CompareTag("Blade") && !sliced)
         {
-            Debug.Log("Slice");
             Slice(other.GetComponent<Blade>().Direction);
 
-            if(gameObject.CompareTag("DamageItem"))
+            if (gameObject.CompareTag("DamageItem"))
             {
                 GameManager.instance.DecreaseHealth();
             }
+            else
+                GameManager.instance.UpdateScore(itemScore);
         }
     }
 }

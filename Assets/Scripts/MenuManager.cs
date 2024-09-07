@@ -17,11 +17,11 @@ public class MenuManager : MonoBehaviour
     public void OnQuit()
     {
         Application.Quit();
+        PlayerPrefs.DeleteKey("TopScore");
     }
     public void OnRestart()
     {
         SceneManager.LoadScene(0);
         GameManager.instance.RestartSpawning();
-        Time.timeScale = 1f;
     }
 }

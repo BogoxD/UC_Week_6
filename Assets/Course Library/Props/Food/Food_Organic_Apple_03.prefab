@@ -150,6 +150,8 @@ MonoBehaviour:
   wholeObject: {fileID: 0}
   slicedObject: {fileID: 0}
   particles: {fileID: 7017962782188693584}
+  itemScore: 1
+  sliced: 0
 --- !u!1001 &9050518169058552431
 PrefabInstance:
   m_ObjectHideFlags: 0
