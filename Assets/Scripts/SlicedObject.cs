@@ -7,6 +7,7 @@ public class SlicedObject : MonoBehaviour
     public GameObject wholeObject;
     public GameObject slicedObject;
     public ParticleSystem particles;
+    public AudioClip cuttingSound;
     public int itemScore;
 
     private Rigidbody objectRb;
@@ -33,7 +34,10 @@ public class SlicedObject : MonoBehaviour
                 GameManager.instance.DecreaseHealth();
             }
             else
+            {
+                GameManager.instance.PlayAudioSourceOneShot(cuttingSound);
                 GameManager.instance.UpdateScore(itemScore);
+            }
         }
     }
 }

@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] public TextMeshProUGUI topScoreText;
     [SerializeField] public GameObject restartButton;
 
+    [Header("Audio")]
+    [SerializeField] public AudioSource audioSource;
+
     private float currentForceSpeed;
     private float currentTorqueYspeed;
     private float currentTorqueXspeed;
@@ -199,5 +202,9 @@ public class GameManager : MonoBehaviour
     public void MultiplyScore(float itemScore, float multiplier)
     {
         currentScore += (int)(itemScore * multiplier);
+    }
+    public void PlayAudioSourceOneShot(AudioClip clip)
+    {
+        audioSource.PlayOneShot(clip);
     }
 }
