@@ -172,6 +172,7 @@ MonoBehaviour:
   wholeObject: {fileID: 0}
   slicedObject: {fileID: 0}
   particles: {fileID: 2186120314826674078}
+  cuttingSound: {fileID: 8300000, guid: d6e15b26d29d7ff4497ec71c6f0d10ca, type: 3}
   itemScore: 0
   sliced: 0
 --- !u!1001 &6656010884069982334

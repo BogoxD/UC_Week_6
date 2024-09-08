@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Spawning")]
     [SerializeField] public float spawnXRange = 10f;
-    [SerializeField] public int spawnSpeed = 2;
+    [SerializeField] public float spawnSpeed = 2;
     [SerializeField] public int minObjectsPerSpawn = 1;
     [SerializeField] public int maxObjectsPerSpawn = 3;
 
@@ -50,6 +50,13 @@ public class GameManager : MonoBehaviour
 
     private int currentScore;
 
+    private bool isPlaying = false;
+
+    [Header("Difficulty Increase")]
+    ///increase difficulty every x seconds
+    public float difficultyTimer = 10f;
+    private float difficultyCurrentTimer;
+
     private void Awake()
     {
         //clean up
@@ -57,9 +64,11 @@ public class GameManager : MonoBehaviour
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
-    void Start()
+    private void Start()
     {
-        if (!instance)
+        //Initialize signleton instance
+
+        if (instance == null)
             instance = this;
         else
             Destroy(gameObject);
@@ -69,9 +78,18 @@ public class GameManager : MonoBehaviour
         //set currentHealth
         currentHealth = maxHealth;
 
+        difficultyCurrentTimer = difficultyTimer;
         //start launching objects
         StartCoroutine(LaunchObject());
 
+    }
+    private void Update()
+    {
+        //increase difficulty over time
+        if (isPlaying)
+            IncreaseDifficultyOverTime();
+        else
+            ResetDifficulty();
     }
     IEnumerator LaunchObject()
     {
@@ -153,7 +171,15 @@ public class GameManager : MonoBehaviour
         //set currentScene
         currentScene = SceneManager.GetActiveScene();
 
-        if (currentScene.name == "Main_Menu") return;
+        //check which scene is loaded
+        if (currentScene.name == "Main_Menu")
+        {
+            isPlaying = false;
+            return;
+        }
+        else
+            isPlaying = true;
+
         //do stuff when scene is loaded
         GameObject[] tempHeartsUI = GameObject.FindGameObjectsWithTag("HeartUI");
 
@@ -182,7 +208,10 @@ public class GameManager : MonoBehaviour
     public void RestartSpawning()
     {
         foreach (Transform child in gameObject.transform)
+        {
+            if (child.TryGetComponent(out AudioSource audioSource)) continue;
             Destroy(child.gameObject);
+        }
 
         maxToSpawnObjects = 999;
 
@@ -206,5 +235,25 @@ public class GameManager : MonoBehaviour
     public void PlayAudioSourceOneShot(AudioClip clip)
     {
         audioSource.PlayOneShot(clip);
+    }
+    public void IncreaseDifficultyOverTime()
+    {
+        difficultyCurrentTimer -= Time.deltaTime;
+
+        if (difficultyCurrentTimer <= 0)
+        {
+            minObjectsPerSpawn++;
+            maxObjectsPerSpawn++;
+            spawnSpeed -= 0.2f;
+
+            difficultyCurrentTimer = difficultyTimer;
+        }
+    }
+    private void ResetDifficulty()
+    {
+        //a bit hard coded at the moment but whatever, to fix later
+        minObjectsPerSpawn = 1;
+        maxObjectsPerSpawn = 3;
+        spawnSpeed = 2f;
     }
 }

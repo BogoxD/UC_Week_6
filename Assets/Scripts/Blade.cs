@@ -79,6 +79,7 @@ public class Blade : MonoBehaviour
     {
         currentTime -= Time.deltaTime;
 
+        //streak time ended
         if (currentTime <= 0f)
         {
             currentObjectsStreak.Clear();
@@ -106,6 +107,7 @@ public class Blade : MonoBehaviour
             streakText.text = $"Streak x {currentObjectsStreak.Count}";
         }
     }
+    //disable function to be invoked
     private void DisableStreakText()
     {
         streakText.gameObject.SetActive(false);

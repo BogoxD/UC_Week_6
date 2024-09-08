@@ -35,9 +35,11 @@ public class SlicedObject : MonoBehaviour
             }
             else
             {
-                GameManager.instance.PlayAudioSourceOneShot(cuttingSound);
                 GameManager.instance.UpdateScore(itemScore);
             }
+
+            //play cutting sound audio for each object type
+            GameManager.instance.PlayAudioSourceOneShot(cuttingSound);
         }
     }
 }
