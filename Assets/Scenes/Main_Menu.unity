@@ -4181,6 +4181,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 826693422830917723, guid: 2a856c88a42c1cc45ba0934608825e67,
+        type: 3}
+      propertyPath: spawnXRange
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 826693422830917723, guid: 2a856c88a42c1cc45ba0934608825e67,
+        type: 3}
+      propertyPath: maxForceSpeed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 826693422830917723, guid: 2a856c88a42c1cc45ba0934608825e67,
+        type: 3}
+      propertyPath: minForceSpeed
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5041696026996802247, guid: 2a856c88a42c1cc45ba0934608825e67,
         type: 3}
       propertyPath: m_Name
